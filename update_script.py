@@ -167,10 +167,16 @@ def update_ss_from_file(ss_key, worksheet_id, data_filename):
     # Sort in descending order by number of total engineers.
     rows_data.sort(key=lambda r: r['num_eng'], reverse=True)
 
+    aggregate = []
     for row_data in rows_data:
+        aggregate += [row_data.values()]
         row_data = dict((key.replace('_', ''), str(value))
                         for key, value in row_data.items())
         entry = ss_client.InsertRow(row_data, ss_key, worksheet_id)
+
+    with open("data.csv", "wb") as f:
+        writer = csv.writer(f)
+        writer.writerows([rows_data[0].keys()] + aggregate)
 
 
 if __name__ == '__main__':
